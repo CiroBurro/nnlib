@@ -286,10 +286,6 @@ impl NeuralNetwork {
                 total_loss += loss;
                 
                 self.backprop(outputs.clone(), y_train[i].clone(), layers_outputs, input.clone(), learning_rate, cost_function); //calcola i gradienti ed aggiorna i pesi
-
-                if i % 100 == 0 {
-                    println!("Input: {:?}, Output: {:?}, Loss: {}", input, outputs, loss);
-                }
             }
 
             let mut val_loss = 0.0;
@@ -305,11 +301,11 @@ impl NeuralNetwork {
                 val_loss += loss;
 
                 if i % 100 == 0 {
-                    println!("Input val: {:?}, Output val: {:?}, Loss val: {}", input, outputs, loss);
+                    println!("Input: {:?}, Output: {:?}, Target: {:?}, Loss val: {}", input, outputs, y_val[i], loss);
                 }
             }
 
-            println!("Epoch: {}, Loss: {}, Validation Loss: {}", epoch + 1, total_loss / x_train.len() as f64, val_loss / x_val.len() as f64); //stampa l'andamento dell'addestramento
+            println!("\x1b[31mEpoch: {}, Loss: {}, Validation Loss: {}\x1b[0m", epoch + 1, total_loss / x_train.len() as f64, val_loss / x_val.len() as f64); //stampa l'andamento dell'addestramento
         }
     }
 
@@ -319,7 +315,7 @@ impl NeuralNetwork {
         for (i, layer) in self.hidden_layers.iter().enumerate() {
             println!("Hidden layer {}: nodi: {}, funzione di attivazione: {}", i+1, layer.nodi, layer.activation);
         }
-        println!("Output layer: nodi: {}, funzione di attivazione: {}", self.output_layer.nodi, self.output_layer.activation);
+        println!("Output layer: nodi: {}, funzione di attivazione: {}\n", self.output_layer.nodi, self.output_layer.activation);
     }
 
     //metodo per salvare la rete neurale in un file json
