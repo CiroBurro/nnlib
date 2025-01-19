@@ -276,7 +276,6 @@ impl NeuralNetwork {
             let mut total_loss = 0.0;
             for (i, input) in x_train.iter().enumerate() {
                 let (outputs, layers_outputs) = self.forwardprop(input.clone()); //calcola l'output della rete
-                println!("{:?}, {:?}", outputs, y_train[i]);
                 let loss = match cost_function { //calcola la loss
                     "mse" => cost_functions::mse_vectors(&outputs, &y_train[i]),
                     "mae" => cost_functions::mae_vectors(&outputs, &y_train[i]),
@@ -286,7 +285,11 @@ impl NeuralNetwork {
                 };
                 total_loss += loss;
                 
-                self.backprop(outputs, y_train[i].clone(), layers_outputs, input.clone(), learning_rate, cost_function); //calcola i gradienti ed aggiorna i pesi
+                self.backprop(outputs.clone(), y_train[i].clone(), layers_outputs, input.clone(), learning_rate, cost_function); //calcola i gradienti ed aggiorna i pesi
+
+                if i % 100 == 0 {
+                    println!("Input: {:?}, Output: {:?}, Loss: {}", input, outputs, loss);
+                }
             }
 
             let mut val_loss = 0.0;
@@ -300,6 +303,10 @@ impl NeuralNetwork {
                     _ => panic!("Funzione di costo non supportata: mse, mae, rms, bce"),
                 };
                 val_loss += loss;
+
+                if i % 100 == 0 {
+                    println!("Input val: {:?}, Output val: {:?}, Loss val: {}", input, outputs, loss);
+                }
             }
 
             println!("Epoch: {}, Loss: {}, Validation Loss: {}", epoch + 1, total_loss / x_train.len() as f64, val_loss / x_val.len() as f64); //stampa l'andamento dell'addestramento
